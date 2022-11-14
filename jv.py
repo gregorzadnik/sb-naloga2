@@ -177,20 +177,23 @@ def restructure_yolo_data(yolo_tensor):
 detector_left = cv2.CascadeClassifier("files\\haarcascade_mcs_leftear.xml")
 detector_right = cv2.CascadeClassifier("files\\haarcascade_mcs_rightear.xml")
 yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path="files\\yolo5s.pt", force_reload=True)
+
 path = "files\\test"
 images = get_images(path)
-iou_sum = 0
-detected = 0
+ious_haar = []
+ious_yolo = []
 
-print(compute_for_image_haar("files\\test\\0501.png", detector_left, detector_right))
-#compute_for_image_yolo("files\\test\\0501.png", yolo_model)
 # Iterate through all the images
-#for index, image in enumerate(images):
-#    print(f"Image {index}/{len(images)}")
-#    iou = compute_for_image_haar(image, detector_left, detector_right)
-#    # If we get None, don't count this case
-#    if(iou is not None):
-#        iou_sum += iou
-#        detected += 1
-
-
+for index, image in enumerate(images):
+    print(f"Image {index}/{len(images)}")
+    print("Computing Haar")
+    iou_haar = compute_for_image_haar(image, detector_left, detector_right)
+    print("Computing yolo")
+    iou_yolo = compute_for_image_yolo(image, yolo_model)
+    # If we get None, don't count this case
+    if(iou_haar is not None):
+        ious_haar.append(iou_haar)
+        print(iou_haar)
+    if(iou_yolo is not None):
+        print(iou_yolo)
+        ious_yolo.append(iou_yolo)
